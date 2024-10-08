@@ -1,14 +1,13 @@
 "use client";
 import VoteForm from "../ui/vote-form";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useReadContract, useReadContracts } from "wagmi";
-import { useState, useEffect } from "react";
+import { useAccount, useReadContract } from "wagmi";
+import { useState } from "react";
 import { config } from "../config";
 import abi from "../contract/abi";
 import { arbitrumSepolia } from "wagmi/chains";
 import { ICandidate } from "@/interfaces/candidate";
 import Candidates from "../ui/candidates";
-import { readContract } from "@wagmi/core";
 
 export default function Vote() {
   const [displayVoteForm, setDisplayVoteForm] = useState<boolean>(false);
@@ -23,38 +22,14 @@ export default function Vote() {
     isPending: candidatesIsPending,
   } = useReadContract({
     abi: abi,
-    address: "0xbb97856948f2e7317a703667149Cf44fF34a8CBb",
+    address: "0xe20CA1df7C8b37a7222FC818A43fB3F46E7B3193",
     functionName: "getCandidates",
     config: config,
     chainId: arbitrumSepolia.id,
   });
 
   const candidatesList = (candidates as ICandidate[]) || [];
-
-  // const fetchVotes = async (id: bigint) => {
-  //   try {
-  //     const result = await readContract(config, {
-  //       address: "0xbb97856948f2e7317a703667149Cf44fF34a8CBb",
-  //       abi: abi,
-  //       functionName: "getCandidateVotes",
-  //       args: [id],
-  //     });
-  //     return result;
-  //   } catch (error) {
-  //     console.error("Error reading contract:", error);
-  //     return null;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const fetchAllVotes = async () => {
-  //     const results = (await Promise.all(
-  //       candidatesList.map((candidate) => fetchVotes(candidate.id))
-  //     )) as bigint[];
-  //     console.log(results);
-  //   };
-  //   fetchAllVotes();
-  // }, []);
+  console.log(candidatesList);
 
   function handleVoteButtonClick() {
     if (account.isConnected) {
@@ -78,13 +53,15 @@ export default function Vote() {
           <button className="self-start">
             <ConnectButton />
           </button>
-          <Candidates candidatesList={candidatesList} />
-          <button
-            className="flex items-center gap-5 rounded-lg bg-green-600 px-64 py-4 text-white transition-colors hover:bg-green-500 md:text-base mt-16"
-            onClick={handleVoteButtonClick}
-          >
-            Vote
-          </button>
+          <div>
+            <Candidates candidatesList={candidatesList} />
+            <button
+              className="text-center rounded-lg bg-green-600 w-full text-white transition-colors hover:bg-green-500 mt-16 py-4 text-xl"
+              onClick={handleVoteButtonClick}
+            >
+              Vote
+            </button>
+          </div>
           {displayVoteForm && (
             <VoteForm
               candidates={candidatesList.map((candidate) => {

@@ -1,9 +1,15 @@
-import { lusitana } from "@/app/ui/fonts";
+import { inter } from "@/app/ui/fonts";
+import { ICandidate } from "@/interfaces/candidate";
 
-export default function Candidate({ name }: { name: String }) {
+export default function Candidate({ candidate }: { candidate: ICandidate }) {
   return (
     <div className="bg-blue-700 px-24 py-8 rounded-md">
-      <p className={`${lusitana.className} text-2xl text-white`}>{name}</p>
+      <p className={`${inter.className} text-2xl text-white`}>
+        {candidate.name}
+      </p>
+      <p className={`${inter.className} text-2xl text-white`}>
+        Votes: {candidate.votes.toString()}
+      </p>
     </div>
   );
 }
