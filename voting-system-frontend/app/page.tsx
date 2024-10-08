@@ -1,7 +1,6 @@
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { lusitana } from "@/app/ui/fonts";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Home() {
   return (
@@ -21,7 +20,6 @@ export default function Home() {
             <span>Vote for a candidate</span>{" "}
             <ArrowRightIcon className="w-5 md:w-6" />
           </Link>
-          <ConnectButton />
         </div>
       </div>
     </main>

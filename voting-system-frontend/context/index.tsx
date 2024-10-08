@@ -7,7 +7,6 @@ import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
-// Create the query client for react-query
 const queryClient = new QueryClient();
 
 export function ContextProvider({ children }: { children: ReactNode }) {
