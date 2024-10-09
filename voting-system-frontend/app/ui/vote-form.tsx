@@ -1,15 +1,14 @@
+import { ICandidate } from "@/interfaces/candidate";
+
 export default function VoteForm({
   candidates,
   onSubmit,
 }: {
-  candidates: string[];
+  candidates: ICandidate[];
   onSubmit: () => void;
 }) {
   return (
-    <form
-      action={onSubmit}
-      className="bg-gray-200 px-16 py-8 rounded-lg absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-    >
+    <form action={onSubmit}>
       <select
         id="vote"
         name="vote"
@@ -21,8 +20,8 @@ export default function VoteForm({
           Choose your candidate
         </option>
         {candidates.map((candidate) => (
-          <option key={candidate} value={candidate}>
-            {candidate}
+          <option key={candidate.id} value={candidate.id.toString()}>
+            {candidate.name}
           </option>
         ))}
       </select>

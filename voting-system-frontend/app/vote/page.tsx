@@ -29,7 +29,6 @@ export default function Vote() {
   });
 
   const candidatesList = (candidates as ICandidate[]) || [];
-  console.log(candidatesList);
 
   function handleVoteButtonClick() {
     if (account.isConnected) {
@@ -63,12 +62,12 @@ export default function Vote() {
             </button>
           </div>
           {displayVoteForm && (
-            <VoteForm
-              candidates={candidatesList.map((candidate) => {
-                return candidate.name;
-              })}
-              onSubmit={handleVote}
-            />
+            <div className="bg-gray-200 py-4 rounded-lg absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div className="w-100 mb-4 text-red-500">
+                <button>X</button>
+              </div>
+              <VoteForm candidates={candidatesList} onSubmit={handleVote} />
+            </div>
           )}
           {displayWarningMessage && (
             <p className="text-red-500">
