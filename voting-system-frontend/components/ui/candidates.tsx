@@ -1,14 +1,14 @@
 import { ICandidatesProps } from "@/interfaces/candidate";
-import Candidate from "@/app/ui/candidate";
-import { inter } from "@/app/ui/fonts";
+import Candidate from "./candidate";
+import { inter } from "./fonts";
 
 export default function Candidates({ candidatesList }: ICandidatesProps) {
   return (
     <>
       <p
-        className={`${inter.className} text-xl text-gray-800 md:text-3xl md:leading-normal`}
+        className={`${inter.className} text-xl text-gray-800 md:text-2xl md:leading-normal`}
       >
-        Candidates:
+        Election candidates:
       </p>
       <div className="flex flex-row gap-8 mt-4">
         {candidatesList.map((candidate) => {
