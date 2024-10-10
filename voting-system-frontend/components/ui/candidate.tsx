@@ -1,13 +1,6 @@
 import { inter } from "./fonts";
 import { ICandidate } from "@/interfaces/candidate";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Candidate({ candidate }: { candidate: ICandidate }) {
   return (

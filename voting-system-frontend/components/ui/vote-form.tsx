@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,7 +55,10 @@ export default function VoteForm({
                 <SelectContent>
                   {candidates.map((candidate) => {
                     return (
-                      <SelectItem value={candidate.id.toString()}>
+                      <SelectItem
+                        key={candidate.id}
+                        value={candidate.id.toString()}
+                      >
                         {candidate.name}
                       </SelectItem>
                     );

@@ -42,14 +42,6 @@ export default function Vote() {
     chainId: arbitrumSepolia.id,
   });
 
-  const { data: isVotingPeriodRunning } = useReadContract({
-    address: contractData.address as `0x${string}`,
-    abi: contractData.abi,
-    functionName: "getCandidates",
-    config: config,
-    chainId: arbitrumSepolia.id,
-  });
-
   useEffect(() => {
     if (account.isConnected) {
       setDisplayWalletWarningMessage(false);
@@ -79,6 +71,7 @@ export default function Vote() {
       args: [BigInt(candidateId)],
     });
     setDisplayVoteForm(false);
+    console.log("vote casted: ", hash);
   }
 
   return (
