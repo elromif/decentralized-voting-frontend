@@ -21,6 +21,6 @@ export const config = getDefaultConfig({
   ssr: true,
   projectId,
   transports: {
-    [arbitrumSepolia.id]: http()
+    [arbitrumSepolia.id]: http("https://arb-sepolia.g.alchemy.com/v2/QfUVCD1KuVfu_rCSuHm7MOtNu0okm_Kg")
   },
 })
