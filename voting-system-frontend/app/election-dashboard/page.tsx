@@ -5,6 +5,8 @@ import {
   useAccount,
   useReadContract,
   useWriteContract,
+  useWaitForTransactionReceipt,
+  useBalance,
   type BaseError,
 } from "wagmi";
 import { useState, useEffect } from "react";
@@ -24,12 +26,13 @@ import {
 import { VoteFormSchema } from "@/components/ui/vote-form";
 import { z } from "zod";
 import contractData from "@/app/contract/Voting.json";
+import Winner from "@/components/ui/winner";
+import { ethers } from "ethers";
 
 export default function Vote() {
   const [displayVoteForm, setDisplayVoteForm] = useState<boolean>(false);
   const [displayWalletWarningMessage, setDisplayWalletWarningMessage] =
-    useState<boolean>(true);
-  const [candidates, setCandidates] = useState<ICandidate[]>([]);
+    useState<boolean>(false);
 
   const account = useAccount();
   const { data: hash, error: voteError, writeContract } = useWriteContract();
@@ -42,13 +45,23 @@ export default function Vote() {
     chainId: arbitrumSepolia.id,
   });
 
+  const candidatesList = (candidatesData as ICandidate[]) || [];
+
+  const { data: isVotingPeriodRunning } = useReadContract({
+    address: contractData.address as `0x${string}`,
+    abi: contractData.abi,
+    functionName: "getVotingPeriodStatus",
+    config: config,
+    chainId: arbitrumSepolia.id,
+  });
+
   useEffect(() => {
-    if (account.isConnected) {
-      setDisplayWalletWarningMessage(false);
-    } else {
+    if (!account.isConnected && isVotingPeriodRunning) {
       setDisplayWalletWarningMessage(true);
+    } else {
+      setDisplayWalletWarningMessage(false);
     }
-  }, [account.isConnected]);
+  }, [account.isConnected, isVotingPeriodRunning]);
 
   function handleVoteButtonClick() {
     if (account.isConnected) {
@@ -56,22 +69,33 @@ export default function Vote() {
     }
   }
 
-  useEffect(() => {
-    const candidatesList = (candidatesData as ICandidate[]) || [];
-    setCandidates(candidatesList);
-  }, [candidatesData]);
-
   function handleVote(values: z.infer<typeof VoteFormSchema>) {
     const candidateId = values.candidate;
+    const amount = values.amount;
 
     writeContract({
       address: contractData.address as `0x${string}`,
       abi: contractData.abi,
       functionName: "vote",
       args: [BigInt(candidateId)],
+      value: ethers.parseEther(amount.toString()),
     });
+
     setDisplayVoteForm(false);
-    console.log("vote casted: ", hash);
+  }
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({
+      hash,
+    });
+
+  const { data: balanceData } = useBalance({
+    address: contractData.address as `0x${string}`,
+  });
+
+  let formattedBalance: string = "";
+  if (balanceData) {
+    formattedBalance = ethers.formatEther(balanceData.value).toString();
   }
 
   return (
@@ -82,28 +106,36 @@ export default function Vote() {
           <button className="self-start">
             <ConnectButton />
           </button>
-          <div>
-            <Candidates candidatesList={candidates} />
-            <Dialog
-              open={account.isConnected && displayVoteForm}
-              onOpenChange={() => setDisplayVoteForm(!displayVoteForm)}
-            >
-              <DialogTrigger asChild>
-                <Button className="w-full mt-8" onClick={handleVoteButtonClick}>
-                  Vote
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Choose your candidate</DialogTitle>
-                  <DialogDescription>
-                    This action cannot be undone.
-                  </DialogDescription>
-                </DialogHeader>
-                <VoteForm candidates={candidates} onSubmit={handleVote} />
-              </DialogContent>
-            </Dialog>
-          </div>
+          {isVotingPeriodRunning ? (
+            <div>
+              <Candidates candidatesList={candidatesList} />
+              <Dialog
+                open={account.isConnected && displayVoteForm}
+                onOpenChange={() => setDisplayVoteForm(!displayVoteForm)}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    className="w-full mt-8"
+                    onClick={handleVoteButtonClick}
+                  >
+                    Vote
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Cast Your Vote</DialogTitle>
+                    <DialogDescription>
+                      This action cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <VoteForm candidates={candidatesList} onSubmit={handleVote} />
+                </DialogContent>
+              </Dialog>
+            </div>
+          ) : (
+            <Winner />
+          )}
+
           {displayWalletWarningMessage && (
             <p className="text-red-500">
               You need to connect your wallet to vote!
@@ -115,6 +147,9 @@ export default function Vote() {
               {(voteError as BaseError).shortMessage || voteError.message}
             </div>
           )}
+          {isConfirming && <div>Waiting for confirmation...</div>}
+          {isConfirmed && <div>Transaction confirmed.</div>}
+          <div>Contract balance: {formattedBalance} Ethers</div>
         </div>
       </div>
     </main>

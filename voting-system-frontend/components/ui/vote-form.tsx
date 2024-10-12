@@ -10,6 +10,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import {
@@ -19,12 +20,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { ICandidate } from "@/interfaces/candidate";
 
 export const VoteFormSchema = z.object({
   candidate: z.string({
     required_error: "Please select a candidate",
   }),
+  amount: z.coerce
+    .number({ required_error: "Please enter a valid eth amount" })
+    .gt(0, "The amount must be greater than 0"),
 });
 
 export default function VoteForm({
@@ -47,6 +52,7 @@ export default function VoteForm({
           render={({ field }) => (
             <FormItem>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormLabel>Candidate name</FormLabel>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Candidate" />
@@ -65,6 +71,19 @@ export default function VoteForm({
                   })}
                 </SelectContent>
               </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Ether amount to give to the winner</FormLabel>
+              <FormControl>
+                <Input type="number" {...field} />
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
