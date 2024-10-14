@@ -84,6 +84,14 @@ export default function Vote() {
     setDisplayVoteForm(false);
   }
 
+  // function endVotingPeriod() {
+  //   writeContract({
+  //     address: contractData.address as `0x${string}`,
+  //     abi: contractData.abi,
+  //     functionName: "endVotingPeriod",
+  //   });
+  // }
+
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
       hash,
@@ -131,6 +139,7 @@ export default function Vote() {
                   <VoteForm candidates={candidatesList} onSubmit={handleVote} />
                 </DialogContent>
               </Dialog>
+              <div>Contract balance: {formattedBalance} Ethers</div>
             </div>
           ) : (
             <Winner />
@@ -149,7 +158,6 @@ export default function Vote() {
           )}
           {isConfirming && <div>Waiting for confirmation...</div>}
           {isConfirmed && <div>Transaction confirmed.</div>}
-          <div>Contract balance: {formattedBalance} Ethers</div>
         </div>
       </div>
     </main>
